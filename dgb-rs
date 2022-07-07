@@ -1,0 +1,11 @@
+#!/bin/bash
+# 
+# Written by: Artur Scheiner
+# Email: artur.scheiner@gmail.com
+
+REALM=$1
+
+rm ~/.digibeectl/config.json
+ln -s ~/.digibeectl/$REALM.config.json ~/.digibeectl/config.json
+
+digibeectl get config
