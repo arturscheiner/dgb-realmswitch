@@ -13,9 +13,8 @@ DGB_RS_DIR=~/.dgb-rs
 
 ############################################################
 # Init                                                     #
-############################################################
-echo 
-echo "Digibee Realm Switch v1.0.0"
+############################################################ 
+echo "Digibeectl Realm Switch v1.0.0"
 mkdir -p $DGB_RS_DIR
 
 ############################################################
@@ -24,27 +23,37 @@ mkdir -p $DGB_RS_DIR
 Help()
 {
    # Display Help
-   echo "Help"
+   echo "Help Information"
    echo 
-   echo "Syntax: $0 [-s|i|h]"
+   echo "Syntax: $0 [-s|a|i|h]"
+   echo
    echo "options:"
    echo "s     Switch realm --> $0 -s realm-name"
-   echo "a     Add realm to switch list"
+   echo "a     Add a new realm to the switch list"
    echo "i     Install this script on /usr/local/bin"
    echo "h     Print this Help."
-   echo
 }
 
 Switch()
 {
+    echo "Set realm based on switch list"
+    echo
+    LIST=$(ls $DGB_RS_DIR)
     REALM=$1
-
-    ln -sf $DGB_RS_DIR/$REALM $CONFIG_FILE
-
-    digibeectl get config
+    if [[ ${LIST[*]} =~ (^|[[:space:]])"$REALM"($|[[:space:]]) ]]; then
+       echo "The realm $REALM is available. Switching..."
+       echo 
+       ln -sf $DGB_RS_DIR/$REALM $CONFIG_FILE
+       digibeectl get config
+    else
+       echo "Could not switch to the realm $REALM."
+       echo "Check-out the available realms to switch to:"
+       echo
+       ListRealms
+    fi
 }
 
-Install()
+Deploy()
 {
     chmod +x $0
     sudo cp $0 /usr/local/bin
@@ -81,23 +90,25 @@ List()
     echo
     echo "The realms listed bellow are already configured:"
     echo 
-    for c in $(ls $DGB_RS_DIR); do echo "  - $c"; done
+    ListRealms
     echo
+}
+
+ListRealms()
+{
+    for c in $(ls $DGB_RS_DIR); do echo "  - $c"; done
 }
 
 ############################################################
 # Main program                                             #
 ############################################################
 
-
-
 ############################################################
-############################################################
-# Process the input options. Add options as needed.        #
+# Process the input options.                               #
 ############################################################
 # Get the options
-# Get the options
-while getopts "hials:" option; do
+
+while getopts "hils:a:" option; do
    case $option in
       a) # config
          Add
@@ -108,14 +119,16 @@ while getopts "hials:" option; do
       s) # switch realm
          Switch $OPTARG
          exit;;
-      i) # install script
-         Install
+      d) # deploy script
+         Deploy
          exit;;
       l) # list script
          List
          exit;;
      \?) # Invalid option
+         echo 
          echo "Error: Invalid option"
+         echo
          exit;;
    esac
 done
