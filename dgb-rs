@@ -1,11 +1,125 @@
 #!/bin/bash
 # 
+# Project: Digibee Realm Switch
+# Version: v1.0.0
 # Written by: Artur Scheiner
 # Email: artur.scheiner@gmail.com
 
-REALM=$1
+############################################################
+# Constants                                                #
+############################################################
+CONFIG_FILE=~/.digibeectl/config.json
+DGB_RS_DIR=~/.dgb-rs
 
-rm ~/.digibeectl/config.json
-ln -s ~/.digibeectl/$REALM.config.json ~/.digibeectl/config.json
+############################################################
+# Init                                                     #
+############################################################
+echo 
+echo "Digibee Realm Switch v1.0.0"
+mkdir -p $DGB_RS_DIR
 
-digibeectl get config
+############################################################
+# Functions                                                #
+############################################################
+Help()
+{
+   # Display Help
+   echo "Help"
+   echo 
+   echo "Syntax: $0 [-s|i|h]"
+   echo "options:"
+   echo "s     Switch realm --> $0 -s realm-name"
+   echo "a     Add realm to switch list"
+   echo "i     Install this script on /usr/local/bin"
+   echo "h     Print this Help."
+   echo
+}
+
+Switch()
+{
+    REALM=$1
+
+    ln -sf $DGB_RS_DIR/$REALM $CONFIG_FILE
+
+    digibeectl get config
+}
+
+Install()
+{
+    chmod +x $0
+    sudo cp $0 /usr/local/bin
+}
+
+Add()
+{
+    echo "Add a new realm to the switch list"
+    echo
+    
+    if [ -f "$CONFIG_FILE" ] && [ ! -h "$CONFIG_FILE" ]; then
+       REALM=$(digibeectl get config | grep realm | awk '{print $2}')
+
+       echo "Digibeectl is configured to:"
+       digibeectl get config
+       echo 
+       echo "Adding realm $REALM to the available list"
+       cp $CONFIG_FILE $DGB_RS_DIR/$REALM
+
+       Switch $REALM
+    else
+       echo "Digibeectl is not configured"
+       echo 'digibeectl set config \
+            --file "path/file.json" \
+            --secret-key "encryption-key" \
+            --auth-key "encryption-passphrase"'
+       echo
+    fi
+}
+
+List()
+{
+    echo "List configured realms"
+    echo
+    echo "The realms listed bellow are already configured:"
+    echo 
+    for c in $(ls $DGB_RS_DIR); do echo "  - $c"; done
+    echo
+}
+
+############################################################
+# Main program                                             #
+############################################################
+
+
+
+############################################################
+############################################################
+# Process the input options. Add options as needed.        #
+############################################################
+# Get the options
+# Get the options
+while getopts "hials:" option; do
+   case $option in
+      a) # config
+         Add
+         exit;;
+      h) # display Help
+         Help
+         exit;;
+      s) # switch realm
+         Switch $OPTARG
+         exit;;
+      i) # install script
+         Install
+         exit;;
+      l) # list script
+         List
+         exit;;
+     \?) # Invalid option
+         echo "Error: Invalid option"
+         exit;;
+   esac
+done
+
+echo "$@"
+echo "Hello $Name!"
+
