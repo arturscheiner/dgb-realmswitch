@@ -54,14 +54,19 @@ Set()
 
 Deploy()
 {
+    echo "Deploy this script to a directory"
+    echo "Sugested path is /usr/local/bin"
+
     echo $0
+    TO_PATH=$1
+
     chmod +x $0
 
-    if [ -f /usr/local/bin/dgb-rs ]; then
-        sudo rm /usr/local/bin/dgb-rs
+    if [ -f $TO_PATH/dgb-rs ]; then
+        sudo rm $TO_PATH/dgb-rs
     fi
 
-    sudo cp $0 /usr/local/bin
+    sudo cp $0 $TO_PATH
 }
 
 Add()
@@ -200,7 +205,21 @@ TT()
 # Get the options
 echo "$(TT magenta)Digibeectl$(TT white) Realm Switch v1.0.0"
 
-while getopts "hdlaus:r:" option; do
+#params="$(getopt -o "hlaus:r:d:" -l diff:,help --name "$cmdname" -- "$@")"
+
+#if [ $? -ne 0 ]
+#then
+#    usage
+#fi
+
+#eval set -- "$params"
+#unset params
+
+#option=$1
+
+while getopts "hlaus:r:d:" option; do
+#while true
+#do
    case $option in
       a) # config
          Add
@@ -212,7 +231,8 @@ while getopts "hdlaus:r:" option; do
          Set $OPTARG
          exit;;
       d) # deploy script to the /usr/local/bin
-         Deploy
+         [[ ! -z $OPTARG ]] && echo "noarg" || echo "args"
+         Deploy $OPTARG
          exit;;
       l) # list script
          List
