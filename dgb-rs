@@ -14,32 +14,34 @@ DGB_RS_DIR=~/.dgb-rs
 ############################################################
 # Init                                                     #
 ############################################################ 
-mkdir -p $DGB_RS_DIR
+Init()
+{
+    mkdir -p $DGB_RS_DIR
 
-if [ ! -z "$(ls -A $DGB_RS_DIR)" ]; then
-    chmod 444 $DGB_RS_DIR/*
-fi
+    if [ ! -z "$(ls -A $DGB_RS_DIR)" ]; then
+        chmod 444 $DGB_RS_DIR/*
+    fi
+}
 
 ############################################################
 # Functions                                                #
 ############################################################
 Help()
 {
-   echo "Help Information"
-   echo 
+   Title "Help Information"
    echo "Syntax: $0 [-s|a|i|h]"
    echo
    echo "options:"
    echo "s     Switch realm --> $0 -s realm-name"
    echo "a     Add a new realm to the switch list"
    echo "i     Install this script on /usr/local/bin"
+   echo "d     Deploy this scriipt to a directory: the suggested path is /usr/local/bin"
    echo "h     Print this Help."
 }
 
 Set()
 {
-    echo "Set realm based on switch list"
-    echo
+    Title "Set realm based on switch list"
     LIST=$(ls $DGB_RS_DIR)
     REALM=$1
     if [[ ${LIST[*]} =~ (^|[[:space:]])"$REALM"($|[[:space:]]) ]]; then
@@ -57,7 +59,7 @@ Set()
 
 Deploy()
 {
-    echo "Deploy this script to a directory"
+    Title "Deploy this script to a directory"
     echo "Sugested path is /usr/local/bin"
 
     echo $0
@@ -75,7 +77,7 @@ Deploy()
 Add()
 {
     echo "Add a new realm to the switch list"
-    echo
+    echo 
     
     if [ -f "$CONFIG_FILE" ] && [ ! -h "$CONFIG_FILE" ]; then
 
@@ -198,9 +200,28 @@ TT()
     esac
 }
 
+Error()
+{
+    MESSAGE=$1
+    echo "$(TT red; TT bold)Error: $MESSAGE$(TT normal; TT white)"
+    echo
+    Help
+}
+
+Title()
+{
+    MESSAGE=$1
+    echo "$(TT green; TT bold)$MESSAGE$(TT normal; TT white)"
+    echo
+}
 ############################################################
 # Main program                                             #
 ############################################################
+
+############################################################
+# Init program                                             #
+############################################################
+Init
 
 ############################################################
 # Process the input options.                               #
@@ -208,21 +229,11 @@ TT()
 # Get the options
 echo "$(TT magenta)Digibeectl$(TT white) Realm Switch v1.0.0"
 
-#params="$(getopt -o "hlaus:r:d:" -l diff:,help --name "$cmdname" -- "$@")"
+OPTERR=0
+OPTION=$1
 
-#if [ $? -ne 0 ]
-#then
-#    usage
-#fi
-
-#eval set -- "$params"
-#unset params
-
-#option=$1
-
-while getopts "hlaus:r:d:" option; do
-#while true
-#do
+OPTIONS="hlaus:r:d:"
+while getopts $OPTIONS option; do
    case $option in
       a) # config
          Add
@@ -233,9 +244,8 @@ while getopts "hlaus:r:d:" option; do
       s) # set active realm
          Set $OPTARG
          exit;;
-      d) # deploy script to the /usr/local/bin
-         [[ ! -z $OPTARG ]] && echo "noarg" || echo "args"
-         Deploy $OPTARG
+      d) # deploy script to the /usr/local/bin 
+        Deploy $OPTARG
          exit;;
       l) # list script
          List
@@ -247,13 +257,11 @@ while getopts "hlaus:r:d:" option; do
          Unset
          exit;;
      \?) # Invalid option
-         echo 
-         echo "Error: Invalid option"
-         echo
-         exit;;
+        Error "invalid option $OPTION or option without required config"
+        exit;;
    esac
 done
 
-echo "$@"
-echo "Hello $Name!"
-
+if [[ -z $1 ]]; then
+    Error "no option defined"
+fi
