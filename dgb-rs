@@ -1,15 +1,17 @@
 #!/bin/bash
-# 
+
 # Project: Digibee Realm Switch
-# Version: v1.0.0
+VERSION="v1.0.0"
 # Written by: Artur Scheiner
 # Email: artur.scheiner@gmail.com
 
 ############################################################
 # Constants                                                #
 ############################################################
+THIS=$(echo $0 | awk -F'/' '{print $(NF)}')
 CONFIG_FILE=~/.digibeectl/config.json
-DGB_RS_DIR=~/.dgb-rs
+DGB_RS_DIR=~/.$THIS
+USER_PATHS=$(echo ${PATH//:/ })
 
 ############################################################
 # Init                                                     #
@@ -62,13 +64,15 @@ Deploy()
     Title "Deploy this script to a directory"
     echo "Sugested path is /usr/local/bin"
 
+
+
     echo $0
     TO_PATH=$1
 
     chmod +x $0
 
-    if [ -f $TO_PATH/dgb-rs ]; then
-        sudo rm $TO_PATH/dgb-rs
+    if [ -f $TO_PATH/$THIS ]; then
+        sudo rm $TO_PATH/$THIS
     fi
 
     sudo cp $0 $TO_PATH
@@ -214,6 +218,56 @@ Title()
     echo "$(TT green; TT bold)$MESSAGE$(TT normal; TT white)"
     echo
 }
+
+Init()
+{
+    mkdir -p $DGB_RS_DIR
+
+    if [ ! -z "$(ls -A $DGB_RS_DIR)" ]; then
+        chmod 444 $DGB_RS_DIR/*
+    fi
+}
+
+Check()
+{
+    Title "Check this script deployment"
+    TRY_FIND=$(which $THIS)
+ 
+    if [ -z $TRY_FIND ]
+    then
+        echo "Seems that this script is not deployed on a PATH, yet!"
+        echo "These are the available PATHS configured for this profile:"
+        echo $PATHS
+        
+        for p in $(echo $USER_PATHS); 
+        do
+            [ $p = "/usr/local/bin" ] && echo "$(TT blue; TT bold)$p$(TT white; TT normal)" || echo $p
+        done
+        
+        echo "Deploy it using the recommended command from the current directory:"
+        echo
+        echo "$(TT green; TT bold)$0 -d /usr/local/bin$(TT white; TT normal)"
+        echo
+    else
+        echo "Seems that this script is already deployed on this system!"
+        echo "Check it out where it is deployed:"
+        echo 
+        echo "$(TT blue; TT bold)$TRY_FIND$(TT white; TT normal)"
+        echo
+        DEPLOYED=$(shasum $(which $THIS) | awk '{print $1}')
+        ACTUAL=$(shasum $(echo $0) | awk '{print $1}')
+
+        [ $DEPLOYED = $ACTUAL ] && \
+            printf "Nice, the actual deployment $(TT green; TT bold)is the same$(TT white; TT normal) \
+            \navailable on this repo directory!\n\n" || \
+            printf "Hum, the actual deployment $(TT yellow; TT bold)is diffent$(TT white; TT normal) \
+            \nthan the one available on this repo directory! \
+            \nYou can re-deploy it by running: \
+            \n\n$(TT green; TT bold)$0 -d /usr/local/bin$(TT white; TT normal)\n\n"
+    fi 
+
+
+}
 ############################################################
 # Main program                                             #
 ############################################################
@@ -232,7 +286,7 @@ echo "$(TT magenta)Digibeectl$(TT white) Realm Switch v1.0.0"
 OPTERR=0
 OPTION=$1
 
-OPTIONS="hlaus:r:d:"
+OPTIONS="hlcaus:r:d:"
 while getopts $OPTIONS option; do
    case $option in
       a) # config
@@ -244,7 +298,8 @@ while getopts $OPTIONS option; do
       s) # set active realm
          Set $OPTARG
          exit;;
-      d) # deploy script to the /usr/local/bin 
+      d) # deploy script to the /usr/local/bin
+        Check
         Deploy $OPTARG
          exit;;
       l) # list script
@@ -256,6 +311,9 @@ while getopts $OPTIONS option; do
       u) # unset active realm
          Unset
          exit;;
+    c) # unset active realm
+        Check
+        exit;;
      \?) # Invalid option
         Error "invalid option $OPTION or option without required config"
         exit;;
