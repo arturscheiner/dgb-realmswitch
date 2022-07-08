@@ -16,7 +16,7 @@ DGB_RS_DIR=~/.dgb-rs
 ############################################################ 
 mkdir -p $DGB_RS_DIR
 
-if [ -z "$(ls -A $DGB_RS_DIR)" ]; then
+if [ ! -z "$(ls -A $DGB_RS_DIR)" ]; then
     chmod 444 $DGB_RS_DIR/*
 fi
 
