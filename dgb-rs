@@ -246,7 +246,7 @@ Check()
         
         echo "Deploy it using the recommended command from the current directory:"
         echo
-        echo "$(TT green; TT bold)$0 -d /usr/local/bin$(TT white; TT normal)"
+        echo "$(TT green; TT bold)sudo $0 -d /usr/local/bin$(TT white; TT normal)"
         echo
     else
         echo "Seems that this script is already deployed on this system!"
@@ -263,7 +263,7 @@ Check()
             printf "Hum, the actual deployment $(TT yellow; TT bold)is diffent$(TT white; TT normal) \
             \nthan the one available on this repo directory! \
             \nYou can re-deploy it by running: \
-            \n\n$(TT green; TT bold)$0 -d /usr/local/bin$(TT white; TT normal)\n\n"
+            \n\n$(TT green; TT bold)sudo $0 -d /usr/local/bin$(TT white; TT normal)\n\n"
     fi 
 
 
