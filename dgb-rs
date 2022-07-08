@@ -12,6 +12,7 @@ THIS=$(echo $0 | awk -F'/' '{print $(NF)}')
 CONFIG_FILE=~/.digibeectl/config.json
 DGB_RS_DIR=~/.$THIS
 USER_PATHS=$(echo ${PATH//:/ })
+[[ ! $0 =~ [^.] ]] && echo "d" || echo "repo"
 
 ############################################################
 # Init                                                     #
@@ -33,12 +34,18 @@ Help()
    Title "Help Information"
    echo "Syntax: $0 [-s|a|i|h]"
    echo
-   echo "options:"
-   echo "s     Switch realm --> $0 -s realm-name"
-   echo "a     Add a new realm to the switch list"
-   echo "i     Install this script on /usr/local/bin"
-   echo "d     Deploy this scriipt to a directory: the suggested path is /usr/local/bin"
-   echo "h     Print this Help."
+   echo "$(TT yellow)realm config$(TT white)"
+   echo "-a     Add a new realm to the switch list"
+   echo "       $0"
+   echo "-s     Switch realm --> $0 -s realm-name"
+   echo 
+   echo "$(TT yellow)this script deploy$(TT white)"
+   echo "-c     Switch realm --> $0 -s realm-name"
+   echo "-d     Deploy this scriipt to a directory: the suggested path is /usr/local/bin"
+   echo
+   echo "$(TT yellow)other options$(TT white)"  
+   echo "-h     Print this Help."
+   echo
 }
 
 Set()
@@ -209,7 +216,6 @@ Error()
     MESSAGE=$1
     echo "$(TT red; TT bold)Error: $MESSAGE$(TT normal; TT white)"
     echo
-    Help
 }
 
 Title()
@@ -322,4 +328,5 @@ done
 
 if [[ -z $1 ]]; then
     Error "no option defined"
+    Help
 fi
