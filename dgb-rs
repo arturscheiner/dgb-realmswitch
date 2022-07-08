@@ -14,15 +14,14 @@ DGB_RS_DIR=~/.dgb-rs
 ############################################################
 # Init                                                     #
 ############################################################ 
-echo "Digibeectl Realm Switch v1.0.0"
 mkdir -p $DGB_RS_DIR
+chmod 444 $DGB_RS_DIR/*
 
 ############################################################
 # Functions                                                #
 ############################################################
 Help()
 {
-   # Display Help
    echo "Help Information"
    echo 
    echo "Syntax: $0 [-s|a|i|h]"
@@ -34,7 +33,7 @@ Help()
    echo "h     Print this Help."
 }
 
-Switch()
+Set()
 {
     echo "Set realm based on switch list"
     echo
@@ -55,7 +54,13 @@ Switch()
 
 Deploy()
 {
+    echo $0
     chmod +x $0
+
+    if [ -f /usr/local/bin/dgb-rs ]; then
+        sudo rm /usr/local/bin/dgb-rs
+    fi
+
     sudo cp $0 /usr/local/bin
 }
 
@@ -65,6 +70,7 @@ Add()
     echo
     
     if [ -f "$CONFIG_FILE" ] && [ ! -h "$CONFIG_FILE" ]; then
+
        REALM=$(digibeectl get config | grep realm | awk '{print $2}')
 
        echo "Digibeectl is configured to:"
@@ -72,16 +78,33 @@ Add()
        echo 
        echo "Adding realm $REALM to the available list"
        cp $CONFIG_FILE $DGB_RS_DIR/$REALM
-
+       chmod 444 $DGB_RS_DIR/$REALM
+       rm $CONFIG_FILE
        Switch $REALM
     else
+       FILE=$1
+       SKEY=$2
+       AKEY=$3
+
+       echo $FILE $SKEY $AKEY
+
        echo "Digibeectl is not configured"
        echo 'digibeectl set config \
-            --file "path/file.json" \
+            --file path/file.json \
             --secret-key "encryption-key" \
             --auth-key "encryption-passphrase"'
        echo
+       #digibeectl set config \
+        #    --file $FILE \
+        #    --secret-key "$SKEY" \
+        #    --auth-key "$AKEY"
+       digibeectl get config
     fi
+}
+
+Unset()
+{
+    rm $CONFIG_FILE
 }
 
 List()
@@ -96,7 +119,75 @@ List()
 
 ListRealms()
 {
-    for c in $(ls $DGB_RS_DIR); do echo "  - $c"; done
+    ACTIVE_REALM=$(digibeectl get config | grep realm | awk '{print $2}')
+
+    for c in $(ls $DGB_RS_DIR); do
+        [[ $c == $ACTIVE_REALM ]] && echo "  $(TT bold; TT green)- $c$(TT normal)" || echo "  - $c"       
+    done
+}
+
+Remove()
+{
+    echo "Remove realm from list"
+    echo
+    REALM=$1
+
+    if [[ -f $DGB_RS_DIR/$REALM ]]; then
+        chmod +rw $DGB_RS_DIR/$REALM
+        rm $DGB_RS_DIR/$REALM
+        echo "Realm $REALM was removed successfully!"
+        echo
+    else
+        echo "The realm $REALM is not configured"
+    fi
+        echo
+        echo "Check the remaining realms configured:"
+        echo
+        ListRealms
+}
+
+TT()
+{
+    FORMAT=$1
+
+    case $FORMAT in
+        bold)
+            tput bold
+            ;;
+        underline)
+            tput smul
+            ;;
+        standout)
+            tput smso
+            ;;
+        normal)
+            tput sgr0
+            ;;
+        red)
+            tput setaf 1
+            ;;
+        green)
+            tput setaf 2
+            ;;
+        yellow)
+            tput setaf 3
+            ;;
+        blue)
+            tput setaf 4
+            ;;
+        magenta)
+            tput setaf 5
+            ;;
+        cyan)
+            tput setaf 6
+            ;;
+        white)
+            tput setaf 7
+            ;;
+        *)
+            tput sgr0
+            ;;
+    esac
 }
 
 ############################################################
@@ -107,8 +198,9 @@ ListRealms()
 # Process the input options.                               #
 ############################################################
 # Get the options
+echo "$(TT magenta)Digibeectl$(TT white) Realm Switch v1.0.0"
 
-while getopts "hils:a:" option; do
+while getopts "hdlaus:r:" option; do
    case $option in
       a) # config
          Add
@@ -116,14 +208,20 @@ while getopts "hils:a:" option; do
       h) # display Help
          Help
          exit;;
-      s) # switch realm
-         Switch $OPTARG
+      s) # set active realm
+         Set $OPTARG
          exit;;
-      d) # deploy script
+      d) # deploy script to the /usr/local/bin
          Deploy
          exit;;
       l) # list script
          List
+         exit;;
+      r) # list script
+         Remove $OPTARG
+         exit;;
+      u) # unset active realm
+         Unset
          exit;;
      \?) # Invalid option
          echo 
