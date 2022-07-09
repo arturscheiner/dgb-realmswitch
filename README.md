@@ -9,20 +9,19 @@
    ```
    curl -s https://storage.googleapis.com/digibee-release-test/releases/install.sh | bash
    ```
-
-
 2) Clone this repo on your MAC or LINUX computer
-```
-git clone https://github.com/arturscheiner/dgb-realmswitch.git
-```
-2) Deploy this script in your $PATH
-```
-sudo ./dgb-rs -d /usr/local/bin
-```
-3) Get some HELP
-```
-dgb-rs -h
-```
+   ```
+   git clone https://github.com/arturscheiner/dgb-realmswitch.git
+   ```
+3) Deploy this script in your $PATH
+   ```
+   sudo ./dgb-rs -d /usr/local/bin
+   ```
+4) Get some HELP
+   ```
+   dgb-rs -h
+   ```
+   
 ```
 Help Information
 
