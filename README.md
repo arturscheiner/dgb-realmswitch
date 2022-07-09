@@ -1,8 +1,17 @@
 ## Digibeectl Realm Switch
 
 **This script let's you switch between Digibee realms.**
+**Before using this script, make sure you have digibeectl installed on your computer**
 
-1) Clone this repo on your MAC or LINUX computer
+
+
+1) Install digibeectl on your MAC or LINUX computer for more information access the [Digibeectl Official Documentation](https://intercom.help/godigibee/en/articles/5214735-digibeectl-use-guide).
+   ```
+   curl -s https://storage.googleapis.com/digibee-release-test/releases/install.sh | bash
+   ```
+
+
+2) Clone this repo on your MAC or LINUX computer
 ```
 git clone https://github.com/arturscheiner/dgb-realmswitch.git
 ```
