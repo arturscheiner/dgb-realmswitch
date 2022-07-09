@@ -47,7 +47,7 @@ Help()
     fi
 
     printf "$(TT yellow)about anything else$(TT white)\n"  
-    printf "l\tShow this help information\n\tE.g. -> $(TT green)$THIS_TYPE -h$(TT white)\n\n"
+    printf "h\tShow this help information\n\tE.g. -> $(TT green)$THIS_TYPE -h$(TT white)\n\n"
 }
 
 Set()
@@ -56,15 +56,16 @@ Set()
     LIST=$(ls $DGB_RS_DIR)
     REALM=$1
     if [[ ${LIST[*]} =~ (^|[[:space:]])"$REALM"($|[[:space:]]) ]]; then
-       echo "The realm $REALM is available. Switching..."
-       echo 
-       ln -sf $DGB_RS_DIR/$REALM $CONFIG_FILE
-       digibeectl get config
+        printf "The realm $(TT blue)$REALM$(TT white) is now, active!\n\n"
+        ln -sf $DGB_RS_DIR/$REALM $CONFIG_FILE     
+        ListRealms
+        getConfig
+        echo
     else
-       echo "Could not switch to the realm $REALM."
-       echo "Check-out the available realms to switch to:"
-       echo
-       ListRealms
+        Warning "Could not switch to this realm"
+        printf "\t$(TT red)- $REALM$(TT white)\n\nCheck-out the available realms to switch to:\n\n"
+        ListRealms
+        echo
     fi
 }
 
@@ -127,13 +128,18 @@ Add()
 
 Unset()
 {
-    rm $CONFIG_FILE
+    Title "Unset the active realm"
+    rm -f $CONFIG_FILE
+    printf "There is no active realm configured:\n\n"
+    ListRealms
+    getConfig
+    
 }
 
 List()
 {
     Title "List configured realms"
-    echo "The realms listed bellow are already configured:"
+    echo "The realms listed bellow are ready to be switched:"
     echo 
     ListRealms
     echo
@@ -144,8 +150,14 @@ ListRealms()
     ACTIVE_REALM=$(digibeectl get config | grep realm | awk '{print $2}')
 
     for c in $(ls $DGB_RS_DIR); do
-        [[ $c == $ACTIVE_REALM ]] && echo "  $(TT bold; TT green)- $c (active)$(TT normal)" || echo "  - $c"       
+        [[ $c == $ACTIVE_REALM ]] && printf "\t$(TT bold; TT green)- $c (active)$(TT normal)\n" || printf "\t- $c\n"       
     done
+}
+
+getConfig()
+{
+    printf "\nCheck out the $(TT yellow)digibeectl get config$(TT white) output\n\n"
+    while read -r line; do printf "\t- $line\n"; done < <(digibeectl get config)
 }
 
 Remove()
@@ -214,11 +226,22 @@ TT()
     esac
 }
 
+callForHelp(){ 
+    printf "Check the help by running:\n\n$(TT green)$THIS_TYPE -h$(TT white)\n\n"
+}
+
 Error()
 {
     MESSAGE=$1
-    echo "$(TT red; TT bold)Error: $MESSAGE$(TT normal; TT white)"
-    echo
+    printf "$(TT red; TT bold)ERROR: $(TT white; TT normal)$MESSAGE\n\n"
+    callForHelp
+}
+
+Warning()
+{
+    MESSAGE=$1
+    printf "$(TT yellow; TT bold)WARNING: $(TT white; TT normal)$MESSAGE\n\n"
+    callForHelp
 }
 
 Title()
@@ -294,7 +317,8 @@ echo "$(TT magenta)Digibeectl$(TT white) Realm Switch v1.0.0"
 OPTERR=0
 OPTION=$1
 
-OPTIONS="hlcaus:r:d:"
+isLocal && OPTIONS="hlcaus:r:d:" || OPTIONS="hlaus:r:"
+
 while getopts $OPTIONS option; do
    case $option in
       a) # config
@@ -318,6 +342,7 @@ while getopts $OPTIONS option; do
          exit;;
       u) # unset active realm
          Unset
+         echo
          exit;;
     c) # unset active realm
         Check
@@ -330,5 +355,4 @@ done
 
 if [[ -z $1 ]]; then
     Error "no option defined"
-    Help
 fi
