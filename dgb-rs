@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Project: Digibee Realm Switch
-VERSION="v1.0.0"
+VERSION="v0.1.0"
 # Written by: Artur Scheiner
 # Email: artur.scheiner@gmail.com
 
@@ -109,14 +109,14 @@ Add()
             printf "\nReplacing the configuration for the realm $REALM in the switch list\n\n"
             chmod +rw $DGB_RS_DIR/$REALM        
         else
-            printf "Adding a new realm $REALM to the switch list\n"
+            printf "\nAdding a new realm $REALM to the switch list\n"
         fi
         cp $CONFIG_FILE $DGB_RS_DIR/$REALM
         chmod 444 $DGB_RS_DIR/$REALM
         rm $CONFIG_FILE
         ListRealms
         printf "Now you can set an active realm by running:\n\n"
-        printf "\t$(TT green; TT bold)$0 -s $(TT underline)realm-name$(TT normal; TT white)\n\n"
+        printf "\t$(TT green; TT bold)$THIS_TYPE -s $(TT underline)$REALM$(TT normal; TT white)\n\n"
     else
         Warning "digibeectl is not configured"
         getConfig
@@ -169,22 +169,25 @@ getConfig()
 
 Remove()
 {
-    echo "Remove realm from list"
-    echo
+    Title "Remove realm from list"
     REALM=$1
+    ACTIVE_REALM=$(digibeectl get config | grep realm | awk '{print $2}')
 
     if [[ -f $DGB_RS_DIR/$REALM ]]; then
         chmod +rw $DGB_RS_DIR/$REALM
-        rm $DGB_RS_DIR/$REALM
+        [[ $ACTIVE_REALM = $REALM ]] && rm -f $CONFIG_FILE
+        rm -f $DGB_RS_DIR/$REALM
         echo "Realm $REALM was removed successfully!"
         echo
     else
-        printf "The realm $(TT yellow)$REALM$(TT normal) is not configured\n\n"
+       Warning "realm not found on the switch list"
+        printf "\t$(TT red)- $REALM$(TT white)\n\nCheck-out the available realms to switch to:\n\n"
+        ListRealms
+        echo
     fi
-    printf "Check the remaining realms configured:\n\n"
-    ListRealms
-    printf "You can set an active realm by running:\n\n"
-    printf "\t$(TT green; TT bold)$0 -s $(TT underline)realm-name$(TT normal; TT white)\n\n"
+
+    printf "Now you can remove a realm by running:\n\n"
+    printf "\t$(TT green; TT bold)$THIS_TYPE -r $(TT underline)realm-name$(TT normal; TT white)\n\n"
 }
 
 TT()
@@ -232,7 +235,7 @@ TT()
 }
 
 callForHelp(){ 
-    printf "Check the help by running:\n\n-> $(TT green)$THIS_TYPE -h$(TT white)\n\n"
+    printf "Check the help by running:\n\n\t$(TT green; TT bold)$THIS_TYPE -h$(TT normal)\n\n"
 }
 
 Error()
@@ -278,16 +281,12 @@ Check()
             [ $p = "/usr/local/bin" ] && echo "$(TT blue; TT bold)$p$(TT white; TT normal)" || echo $p
         done
         
-        echo "Deploy it using the recommended command from the current directory:"
-        echo
-        echo "$(TT green; TT bold)sudo $0 -d /usr/local/bin$(TT white; TT normal)"
-        echo
+        printf "Deploy it using the recommended command from the current directory:\n"
+        printf "\t$(TT green; TT bold)sudo $0 -d /usr/local/bin$(TT white; TT normal)\n"
     else
-        echo "Seems that this script is already deployed on this system!"
-        echo "Check it out where it is deployed:"
-        echo 
-        echo "$(TT blue; TT bold)$TRY_FIND$(TT white; TT normal)"
-        echo
+        printf "Seems that this script is already deployed on this system!\n"
+        printf "Check it out where it is deployed:\n\n"
+        printf "\t$(TT blue; TT bold)$TRY_FIND$(TT white; TT normal)\n\n"
         DEPLOYED=$(shasum $(which $THIS) | awk '{print $1}')
         ACTUAL=$(shasum $(echo $0) | awk '{print $1}')
 
@@ -297,7 +296,7 @@ Check()
             printf "Hum, the actual deployment $(TT yellow; TT bold)is diffent$(TT white; TT normal) \
             \nthan the one available on this repo directory! \
             \nYou can re-deploy it by running: \
-            \n\n$(TT green; TT bold)sudo $0 -d /usr/local/bin$(TT white; TT normal)\n\n"
+            \n\n\t$(TT green; TT bold)sudo $0 -d /usr/local/bin$(TT white; TT normal)\n\n"
     fi 
 
 
@@ -315,7 +314,7 @@ Init
 # Process the input options.                               #
 ############################################################
 # Get the options
-echo "$(TT magenta)Digibeectl$(TT white) Realm Switch v1.0.0"
+printf "$(TT magenta)Digibeectl$(TT white) Realm Switch $VERSION\n\n"
 
 OPTERR=0
 OPTION=$1
