@@ -1,7 +1,7 @@
 ## Digibeectl Realm Switch
 
 **This script let's you switch between Digibee realms.**
-**Before using this script, make sure you have digibeectl installed on your computer**
+**Before using it, make sure you have digibeectl installed on your computer**
 
 
 
@@ -21,7 +21,7 @@
    ```
    dgb-rs -h
    ```
-   
+
 ```
 Help Information
 
