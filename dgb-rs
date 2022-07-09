@@ -6,26 +6,24 @@ VERSION="v1.0.0"
 # Email: artur.scheiner@gmail.com
 
 ############################################################
-# Constants                                                #
+# Init                                                     #
 ############################################################
+isLocal()[[ $0 == ./* ]]
+
 THIS=$(echo $0 | awk -F'/' '{print $(NF)}')
 CONFIG_FILE=~/.digibeectl/config.json
 DGB_RS_DIR=~/.$THIS
 USER_PATHS=$(echo ${PATH//:/ })
-[[ $0 == ./* ]] && THIS_TYPE="$0" || THIS_TYPE="$THIS"
 
-############################################################
-# Init                                                     #
-############################################################ 
+isLocal && THIS_TYPE="$0" || THIS_TYPE="$THIS"
+
 Init()
 {
     mkdir -p $DGB_RS_DIR
 
     if [ ! -z "$(ls -A $DGB_RS_DIR)" ]; then
         chmod 444 $DGB_RS_DIR/*
-    fi
-
-    
+    fi 
 }
 
 ############################################################
@@ -33,24 +31,23 @@ Init()
 ############################################################
 Help()
 {
-   Title "Help Information"
-   printf "Syntax: $(TT bold)$THIS_TYPE [-a|l|r|s|u|c|d|h] params$(TT normal)\n\n"
-   printf "$(TT yellow)about realm stuff$(TT white)\n"
-   printf "a\tAdd a new realm to the switch list\n\tE.g. -> $(TT green)$THIS_TYPE -a$(TT white)\n\n"
-   printf "l\tList all the realms configured\n\tE.g. -> $(TT green)$THIS_TYPE -l$(TT white)\n\n"
-   printf "r\tRemove a realm from the switch list\n\tE.g. -> $(TT green)$THIS_TYPE -r $(TT underline)realm-name$(TT normal; TT white)\n\n"
-   printf "s\tSet an active realm\n\tE.g. -> $(TT green)$THIS_TYPE -s $(TT underline)realm-name$(TT normal; TT white)\n\n"
-   printf "u\tUnset the active realm\n\tE.g. -> $(TT green)$THIS_TYPE -u$(TT normal; TT white)\n\n"
+    Title "Help Information"
+    printf "Syntax: $(TT bold)$THIS_TYPE [-a|l|r|s|u|c|d|h] params$(TT normal)\n\n"
+    printf "$(TT yellow)about realm stuff$(TT white)\n"
+    printf "a\tAdd a new realm to the switch list\n\tE.g. -> $(TT green)$THIS_TYPE -a$(TT white)\n\n"
+    printf "l\tList all the realms configured\n\tE.g. -> $(TT green)$THIS_TYPE -l$(TT white)\n\n"
+    printf "r\tRemove a realm from the switch list\n\tE.g. -> $(TT green)$THIS_TYPE -r $(TT underline)realm-name$(TT normal; TT white)\n\n"
+    printf "s\tSet an active realm\n\tE.g. -> $(TT green)$THIS_TYPE -s $(TT underline)realm-name$(TT normal; TT white)\n\n"
+    printf "u\tUnset the active realm\n\tE.g. -> $(TT green)$THIS_TYPE -u$(TT normal; TT white)\n\n"
    
     if [[ $0 == ./* ]]; then
         printf "$(TT yellow)about this script$(TT white)\n"
         printf "c\tCheck this script deployment\n\tE.g. -> $(TT green)$THIS_TYPE -c$(TT white)\n\n"
         printf "d\tDeploy this script into a directory\n\tE.g. -> $(TT green)sudo $THIS_TYPE -d /usr/local/bin$(TT white)\n\n"
     fi
-   echo
-   echo "$(TT yellow)about anything else$(TT white)"  
-   echo "h     Print this Help."
-   echo
+
+    printf "$(TT yellow)about anything else$(TT white)\n"  
+    printf "l\tShow this help information\n\tE.g. -> $(TT green)$THIS_TYPE -h$(TT white)\n\n"
 }
 
 Set()
