@@ -90,40 +90,46 @@ Deploy()
 
 Add()
 {
-    echo "Add a new realm to the switch list"
-    echo 
-    
+    Title "Add a new realm to the switch list"
+
+    if [ -h "$CONFIG_FILE" ]; then
+        Warning "there is an active realm configured"
+        ListRealms
+        printf "Unset the active realm prior to add a new one to the list by running:\n\n"
+        printf "\t$(TT green)$THIS_TYPE -u$(TT normal; TT white)\n\n"
+        return
+    fi
+
     if [ -f "$CONFIG_FILE" ] && [ ! -h "$CONFIG_FILE" ]; then
 
-       REALM=$(digibeectl get config | grep realm | awk '{print $2}')
-
-       echo "Digibeectl is configured to:"
-       digibeectl get config
-       echo 
-       echo "Adding realm $REALM to the available list"
-       cp $CONFIG_FILE $DGB_RS_DIR/$REALM
-       chmod 444 $DGB_RS_DIR/$REALM
-       rm $CONFIG_FILE
-       Set $REALM
+        REALM=$(digibeectl get config | grep realm | awk '{print $2}')
+        getConfig
+    
+        if [ -f $DGB_RS_DIR/$REALM ]; then
+            printf "\nReplacing the configuration for the realm $REALM in the switch list\n\n"
+            chmod +rw $DGB_RS_DIR/$REALM        
+        else
+            printf "Adding a new realm $REALM to the switch list\n"
+        fi
+        cp $CONFIG_FILE $DGB_RS_DIR/$REALM
+        chmod 444 $DGB_RS_DIR/$REALM
+        rm $CONFIG_FILE
+        ListRealms
+        printf "Now you can set an active realm by running:\n\n"
+        printf "\t$(TT green; TT bold)$0 -s $(TT underline)realm-name$(TT normal; TT white)\n\n"
     else
-       FILE=$1
-       SKEY=$2
-       AKEY=$3
-
-       echo $FILE $SKEY $AKEY
-
-       echo "Digibeectl is not configured"
-       echo 'digibeectl set config \
-            --file path/file.json \
-            --secret-key "encryption-key" \
-            --auth-key "encryption-passphrase"'
-       echo
-       #digibeectl set config \
-        #    --file $FILE \
-        #    --secret-key "$SKEY" \
-        #    --auth-key "$AKEY"
-       digibeectl get config
+        Warning "digibeectl is not configured"
+        getConfig
+        printf "\nThe realms listed bellow are ready to be switched:\n\n"
+        ListRealms
+        beforeAdd
     fi
+}
+
+beforeAdd(){
+    printf "To add a new realm to the list, you must configure $(TT yellow)digibeectl$(TT normal) by running:\n\n"
+    printf "$(TT green)digibeectl set config \\ \n\t--file $(TT underline)path/file.json$(TT normal; TT green) \\ \n\t--secret-key \"$(TT underline)encryption-key$(TT normal; TT green)\" \\ \n\t--auth-key \"$(TT underline)encryption-passphrase\"$(TT normal)\n\n"
+    printf "Check Digibee documentation to know more on how to create\nthe $(TT yellow)file.json,$(TT normal) the $(TT yellow)secret-key$(TT normal) and the $(TT yellow)auth-key$(TT normal)\n\n"
 }
 
 Unset()
@@ -152,11 +158,12 @@ ListRealms()
     for c in $(ls $DGB_RS_DIR); do
         [[ $c == $ACTIVE_REALM ]] && printf "\t$(TT bold; TT green)- $c (active)$(TT normal)\n" || printf "\t- $c\n"       
     done
+    echo
 }
 
 getConfig()
 {
-    printf "\nCheck out the $(TT yellow)digibeectl get config$(TT white) output\n\n"
+    printf "Check out the $(TT yellow)digibeectl get config$(TT white) output\n\n"
     while read -r line; do printf "\t- $line\n"; done < <(digibeectl get config)
 }
 
@@ -172,14 +179,12 @@ Remove()
         echo "Realm $REALM was removed successfully!"
         echo
     else
-        echo "The realm $REALM is not configured"
+        printf "The realm $(TT yellow)$REALM$(TT normal) is not configured\n\n"
     fi
-        printf "\nCheck the remaining realms configured:\n\n"
-        ListRealms
-        echo
-        echo "You can set an active realm by running:"
-        echo
-        printf "$(TT green; TT bold)$0 -s $(TT underline)realm-name$(TT normal; TT white)\n\n"
+    printf "Check the remaining realms configured:\n\n"
+    ListRealms
+    printf "You can set an active realm by running:\n\n"
+    printf "\t$(TT green; TT bold)$0 -s $(TT underline)realm-name$(TT normal; TT white)\n\n"
 }
 
 TT()
@@ -227,21 +232,19 @@ TT()
 }
 
 callForHelp(){ 
-    printf "Check the help by running:\n\n$(TT green)$THIS_TYPE -h$(TT white)\n\n"
+    printf "Check the help by running:\n\n-> $(TT green)$THIS_TYPE -h$(TT white)\n\n"
 }
 
 Error()
 {
     MESSAGE=$1
     printf "$(TT red; TT bold)ERROR: $(TT white; TT normal)$MESSAGE\n\n"
-    callForHelp
 }
 
 Warning()
 {
     MESSAGE=$1
     printf "$(TT yellow; TT bold)WARNING: $(TT white; TT normal)$MESSAGE\n\n"
-    callForHelp
 }
 
 Title()
@@ -349,10 +352,12 @@ while getopts $OPTIONS option; do
         exit;;
      \?) # Invalid option
         Error "invalid option $OPTION or option without required config"
+        callForHelp
         exit;;
    esac
 done
 
 if [[ -z $1 ]]; then
     Error "no option defined"
+    callForHelp
 fi
