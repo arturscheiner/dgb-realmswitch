@@ -34,7 +34,7 @@ Init()
 Help()
 {
    Title "Help Information"
-   printf "Syntax: $(TT bold)$THIS_TYPE [-s|a|i|h] params$(TT normal)\n\n"
+   printf "Syntax: $(TT bold)$THIS_TYPE [-a|l|r|s|u|c|d|h] params$(TT normal)\n\n"
    printf "$(TT yellow)about realm stuff$(TT white)\n"
    printf "a\tAdd a new realm to the switch list\n\tE.g. -> $(TT green)$THIS_TYPE -a$(TT white)\n\n"
    printf "l\tList all the realms configured\n\tE.g. -> $(TT green)$THIS_TYPE -l$(TT white)\n\n"
@@ -42,10 +42,11 @@ Help()
    printf "s\tSet an active realm\n\tE.g. -> $(TT green)$THIS_TYPE -s $(TT underline)realm-name$(TT normal; TT white)\n\n"
    printf "u\tUnset the active realm\n\tE.g. -> $(TT green)$THIS_TYPE -u$(TT normal; TT white)\n\n"
    
-   echo 
-   printf "$(TT yellow)about this script$(TT white)\n"
-   echo "c     Switch realm --> $0 -s realm-name"
-   echo "d     Deploy this scriipt to a directory: the suggested path is /usr/local/bin"
+    if [[ $0 == ./* ]]; then
+        printf "$(TT yellow)about this script$(TT white)\n"
+        printf "c\tCheck this script deployment\n\tE.g. -> $(TT green)$THIS_TYPE -c$(TT white)\n\n"
+        printf "d\tDeploy this script into a directory\n\tE.g. -> $(TT green)sudo $THIS_TYPE -d /usr/local/bin$(TT white)\n\n"
+    fi
    echo
    echo "$(TT yellow)about anything else$(TT white)"  
    echo "h     Print this Help."
