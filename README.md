@@ -2,7 +2,7 @@
 
 **This script let's you switch between Digibee realms.**
 
-1) Get the script, clonning this repo
+1) Clone this repo on your MAC or LINUX computer
 ```
 git clone https://github.com/arturscheiner/dgb-realmswitch.git
 ```
@@ -40,7 +40,7 @@ h	Show this help information
 	E.g. -> dgb-rs -h
 ```
 
-###Obs: These two options just work when running ./dgb-rs inside the repo cloned folder.
+### Obs: These two options just work when running ./dgb-rs inside the repo cloned folder.
 
 ```
 about this script
