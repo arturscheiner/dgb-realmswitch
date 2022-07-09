@@ -1,64 +1,38 @@
-# dgb-realmswitch
-A small script to allow switching between Digibee realms
+## Digibeectl Realm Switch
 
-Small script to help "switch" between Digibee Realms
-using digibeectl.
- 
-When you use the "set config" parameters, digibeectl 
-creates a config.json file inside the "current user" 
-~/.digibeectl folder. After configuring your first
-"realm-token" move to the directory:
- 
-Supose that you have already created your digibeectl token
-to get acces to the realm "training". Do the configuration
-as described in the digibeectl manual. Now let's go in the 
-config directory:
+This script let's you switch between realms. To start using it 
 
- cd ~/.digibeectl
- ls
+1) git clone https://github.com/arturscheiner/dgb-realmswitch.git
+2) go into
 
- You should be seeing the config.json file inside the
- directory. Rename the file to the name-of-the-realm.config.json
- check the example:
 
- mv config.json training.config.json
- 
- Check the digibeectl configuration running:
+Help Information
 
- digibeectl get config
-  
- You will see that it is empty, in the "not configured" state.
- Now let's create another digibeectl token for a second realm. Ex: poc-dgb
- Repeat the steps to configure digibeectl with the new token and
- check the ~/.digibeectl directory. Now you will see two files:
+Syntax: ./dgb-rs [-a|l|r|s|u|c|d|h] params
 
- - config.json - the new configuration created with the new poc-dgb token 
- - training.config.json - the configuration created on the previous step
+about realm stuff
+a	Add a new realm to the switch list
+	E.g. -> ./dgb-rs -a
 
- Rename the new config.json token to poc-dgb.config.json using the:
- 
- mv config.json poc-dgb.config.json
- 
- Copy and paste this content to a new shell script file using vim or any other editor.
- 
- vim dgb-sw
+l	List all the realms configured
+	E.g. -> ./dgb-rs -l
 
- Give permissions for this file to run as an executable:
- 
- chmod +x ./dgb-sw
- 
- Run the script with the "realm-name" as a parameter from the path you've created it.
+r	Remove a realm from the switch list
+	E.g. -> ./dgb-rs -r realm-name
 
- ./dgb-sw training
+s	Set an active realm
+	E.g. -> ./dgb-rs -s realm-name
 
- Sudo copy the script to a folder in your $PATH.
- check the path with:
+u	Unset the active realm
+	E.g. -> ./dgb-rs -u
 
- echo $PATH
+about this script
+c	Check this script deployment
+	E.g. -> ./dgb-rs -c
 
- sudo cp ./dgb-sw /usr/local/bin
+d	Deploy this script into a directory
+	E.g. -> sudo ./dgb-rs -d /usr/local/bin
 
- Run the command without the "./"
-
- dgb-sw training
- dgb-sw poc-dgb
+about anything else
+h	Show this help information
+	E.g. -> ./dgb-rs -h
