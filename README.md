@@ -1,10 +1,19 @@
 ## Digibeectl Realm Switch
 
-**This script let's you switch between realms.**
+**This script let's you switch between Digibee realms.**
 
-1) git clone https://github.com/arturscheiner/dgb-realmswitch.git
-2) go into
-
+1) Get the script, clonning this repo
+```
+git clone https://github.com/arturscheiner/dgb-realmswitch.git
+```
+2) Deploy this script in your $PATH
+```
+sudo ./dgb-rs -d /usr/local/bin
+```
+3) Get some HELP
+```
+4) dgb-rs -h
+```
 ```
 Help Information
 
