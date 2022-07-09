@@ -5,7 +5,7 @@
 1) git clone https://github.com/arturscheiner/dgb-realmswitch.git
 2) go into
 
-
+```
 Help Information
 
 Syntax: ./dgb-rs [-a|l|r|s|u|c|d|h] params
@@ -36,3 +36,4 @@ d	Deploy this script into a directory
 about anything else
 h	Show this help information
 	E.g. -> ./dgb-rs -h
+```
