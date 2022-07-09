@@ -12,7 +12,7 @@ THIS=$(echo $0 | awk -F'/' '{print $(NF)}')
 CONFIG_FILE=~/.digibeectl/config.json
 DGB_RS_DIR=~/.$THIS
 USER_PATHS=$(echo ${PATH//:/ })
-#[[ $0 == ./* ]] && $0 || echo $THIS
+[[ $0 == ./* ]] && THIS_TYPE="$0" || THIS_TYPE="$THIS"
 
 ############################################################
 # Init                                                     #
@@ -24,6 +24,8 @@ Init()
     if [ ! -z "$(ls -A $DGB_RS_DIR)" ]; then
         chmod 444 $DGB_RS_DIR/*
     fi
+
+    
 }
 
 ############################################################
@@ -32,19 +34,21 @@ Init()
 Help()
 {
    Title "Help Information"
-   echo "Syntax: $THIS_REF [-s|a|i|h]"
-   echo
-   echo "$(TT yellow)realm config$(TT white)"
-   echo "-a     Add a new realm to the switch list"
-   echo "       $0"
-   echo "-s     Switch realm --> $0 -s realm-name"
+   printf "Syntax: $(TT bold)$THIS_TYPE [-s|a|i|h] params$(TT normal)\n\n"
+   printf "$(TT yellow)about realm stuff$(TT white)\n"
+   printf "a\tAdd a new realm to the switch list\n\tE.g. -> $(TT green)$THIS_TYPE -a$(TT white)\n\n"
+   printf "l\tList all the realms configured\n\tE.g. -> $(TT green)$THIS_TYPE -l$(TT white)\n\n"
+   printf "r\tRemove a realm from the switch list\n\tE.g. -> $(TT green)$THIS_TYPE -r $(TT underline)realm-name$(TT normal; TT white)\n\n"
+   printf "s\tSet an active realm\n\tE.g. -> $(TT green)$THIS_TYPE -s $(TT underline)realm-name$(TT normal; TT white)\n\n"
+   printf "u\tUnset the active realm\n\tE.g. -> $(TT green)$THIS_TYPE -u$(TT normal; TT white)\n\n"
+   
    echo 
-   echo "$(TT yellow)this script deploy$(TT white)"
-   echo "-c     Switch realm --> $0 -s realm-name"
-   echo "-d     Deploy this scriipt to a directory: the suggested path is /usr/local/bin"
+   printf "$(TT yellow)about this script$(TT white)\n"
+   echo "c     Switch realm --> $0 -s realm-name"
+   echo "d     Deploy this scriipt to a directory: the suggested path is /usr/local/bin"
    echo
-   echo "$(TT yellow)other options$(TT white)"  
-   echo "-h     Print this Help."
+   echo "$(TT yellow)about anything else$(TT white)"  
+   echo "h     Print this Help."
    echo
 }
 
@@ -101,7 +105,7 @@ Add()
        cp $CONFIG_FILE $DGB_RS_DIR/$REALM
        chmod 444 $DGB_RS_DIR/$REALM
        rm $CONFIG_FILE
-       Switch $REALM
+       Set $REALM
     else
        FILE=$1
        SKEY=$2
@@ -130,8 +134,7 @@ Unset()
 
 List()
 {
-    echo "List configured realms"
-    echo
+    Title "List configured realms"
     echo "The realms listed bellow are already configured:"
     echo 
     ListRealms
@@ -143,7 +146,7 @@ ListRealms()
     ACTIVE_REALM=$(digibeectl get config | grep realm | awk '{print $2}')
 
     for c in $(ls $DGB_RS_DIR); do
-        [[ $c == $ACTIVE_REALM ]] && echo "  $(TT bold; TT green)- $c$(TT normal)" || echo "  - $c"       
+        [[ $c == $ACTIVE_REALM ]] && echo "  $(TT bold; TT green)- $c (active)$(TT normal)" || echo "  - $c"       
     done
 }
 
@@ -161,10 +164,12 @@ Remove()
     else
         echo "The realm $REALM is not configured"
     fi
-        echo
-        echo "Check the remaining realms configured:"
-        echo
+        printf "\nCheck the remaining realms configured:\n\n"
         ListRealms
+        echo
+        echo "You can set an active realm by running:"
+        echo
+        printf "$(TT green; TT bold)$0 -s $(TT underline)realm-name$(TT normal; TT white)\n\n"
 }
 
 TT()
@@ -221,8 +226,7 @@ Error()
 Title()
 {
     MESSAGE=$1
-    echo "$(TT green; TT bold)$MESSAGE$(TT normal; TT white)"
-    echo
+    printf "$(TT green; TT bold)$MESSAGE$(TT normal; TT white)\n\n"
 }
 
 Init()
