@@ -12,7 +12,7 @@ THIS=$(echo $0 | awk -F'/' '{print $(NF)}')
 CONFIG_FILE=~/.digibeectl/config.json
 DGB_RS_DIR=~/.$THIS
 USER_PATHS=$(echo ${PATH//:/ })
-[[ ! $0 =~ [^.] ]] && echo "d" || echo "repo"
+#[[ $0 == ./* ]] && $0 || echo $THIS
 
 ############################################################
 # Init                                                     #
@@ -32,7 +32,7 @@ Init()
 Help()
 {
    Title "Help Information"
-   echo "Syntax: $0 [-s|a|i|h]"
+   echo "Syntax: $THIS_REF [-s|a|i|h]"
    echo
    echo "$(TT yellow)realm config$(TT white)"
    echo "-a     Add a new realm to the switch list"
@@ -265,7 +265,7 @@ Check()
 
         [ $DEPLOYED = $ACTUAL ] && \
             printf "Nice, the actual deployment $(TT green; TT bold)is the same$(TT white; TT normal) \
-            \navailable on this repo directory!\n\n" || \
+            \nas the one available on this repo directory!\n\n" || \
             printf "Hum, the actual deployment $(TT yellow; TT bold)is diffent$(TT white; TT normal) \
             \nthan the one available on this repo directory! \
             \nYou can re-deploy it by running: \
