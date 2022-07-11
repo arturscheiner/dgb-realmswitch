@@ -37,7 +37,7 @@
    - Step 2 -> configure a new realm with digibeectl
    - Step 6 -> add the realm to the switch list
    
-8) To get a list of the realm switch list, run:
+8) To get all of the realms in the switch list, run:
    ```
    dgb-rs -l
    ```
