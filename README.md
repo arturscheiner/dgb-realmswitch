@@ -17,11 +17,11 @@ digibeectl set config --file "path/file.json" --secret-key "encryption-key" --au
 ```
 git clone https://github.com/arturscheiner/dgb-realmswitch.git
 ```
-3) Access the clonned directory "dgb-realmswitch"
+3) Access the cloned directory "dgb-realmswitch"
 ```
 cd ./dgb-realmswitch
 ```
-4) From inside the clonned directory, deploy this script in your $PATH. On this step the script will copy itself on the directory specified as a parameter. The directory must be a $PATH directory, otherwise you will not be able to run the command anywhere in your workstation, without the "./" in front of it.
+4) From inside the cloned directory, deploy this script in your $PATH. On this step the script will copy itself on the directory specified as a parameter. The directory must be a $PATH directory, otherwise you will not be able to run the command anywhere in your workstation, without the "./" in front of it.
 ```
 sudo ./dgb-rs -d /usr/local/bin
 ```
