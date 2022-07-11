@@ -5,19 +5,40 @@
 
 
 
-1) Install digibeectl on your MAC or LINUX computer for more information access the [Digibeectl Official Documentation](https://intercom.help/godigibee/en/articles/5214735-digibeectl-use-guide).
+1) Install digibeectl on your MAC or LINUX computer as described on [Digibeectl Official Documentation](https://intercom.help/godigibee/en/articles/5214735-digibeectl-use-guide).
    ```
    curl -s https://storage.googleapis.com/digibee-release-test/releases/install.sh | bash
    ```
-2) Clone this repo on your MAC or LINUX computer
+2) Configure digibeectl on your MAC or LINUX computer as described on [Digibeectl Official Documentation](https://intercom.help/godigibee/en/articles/5214735-digibeectl-use-guide).
+   ```
+   digibeectl set config --file "path/file.json" --secret-key "encryption-key" --auth-key "encryption-passphrase"
+   ```
+3) Clone this repo on your MAC or LINUX computer
    ```
    git clone https://github.com/arturscheiner/dgb-realmswitch.git
    ```
-3) Deploy this script in your $PATH
+3) Deploy this script in your $PATH. On this step the script will copy itself on the directory specified as a parameter. The directory must be a $PATH directory, otherwise you will not be able to run the command anywhere in your workstation, without the "./" in front of it.
    ```
    sudo ./dgb-rs -d /usr/local/bin
    ```
-4) Get some HELP
+4) Add the actual digibeectl configuration to the realm switch list.
+   ```
+   dgb-rs -a
+   ```
+5) If you want to add another realm, first unset the realm.
+    ```
+   dgb-rs -u
+   ```
+7) After unsetting the realm as described above, repeat the steps 2 up to 4.
+8) To get a list of the realm switch list, run:
+   ```
+   dgb-rs -l
+   ```
+9) To switch between realms, just run:
+   ```
+   dgb-rs -s realm-name
+   ```
+10) Get some HELP
    ```
    dgb-rs -h
    ```
