@@ -17,31 +17,31 @@ digibeectl set config --file "path/file.json" --secret-key "encryption-key" --au
 ```
 git clone https://github.com/arturscheiner/dgb-realmswitch.git
 ```
-3) Access the cloned directory "dgb-realmswitch"
+4) Access the cloned directory "dgb-realmswitch"
 ```
 cd ./dgb-realmswitch
 ```
-4) From inside the cloned directory, deploy this script in your $PATH. On this step the script will copy itself on the directory specified as a parameter. The directory must be a $PATH directory, otherwise you will not be able to run the command anywhere in your workstation, without the "./" in front of it.
+5) From inside the cloned directory, deploy this script in your $PATH. On this step the script will copy itself on the directory specified as a parameter. The directory must be a $PATH directory, otherwise you will not be able to run the command anywhere in your workstation, without the "./" in front of it.
 ```
 sudo ./dgb-rs -d /usr/local/bin
 ```
-4) Add the actual digibeectl configuration to the realm switch list.
+6) Add the actual digibeectl configuration to the realm switch list.
 ```
 dgb-rs -a
 ```
-5) If you want to add another realm to the switch list, first unset the realm.
+7) If you want to add another realm to the switch list, first unset the realm.
 ```
 dgb-rs -u
 ```
-7) After unsetting the realm as described above, repeat the steps 2 and 6.
+8) After unsetting the realm as described above, repeat the steps 2 and 6.
    - Step 2 -> configure a new realm with digibeectl
    - Step 6 -> add the realm to the switch list
    
-8) To get all of the realms in the switch list, run:
+9) To get all of the realms in the switch list, run:
 ```
 dgb-rs -l
 ```
-9)  To switch between realms, just run:
+10)  To switch between realms, just run:
 ```
 dgb-rs -s realm-name
 ```
