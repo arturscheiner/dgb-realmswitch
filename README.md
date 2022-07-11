@@ -25,7 +25,7 @@ cd ./dgb-realmswitch
 ```
 sudo ./dgb-rs -d /usr/local/bin
 ```
-6) Add the actual digibeectl configuration to the realm switch list. If you wanna add another realm to the list, navigate through the steps 7 and 8. If not, follow the step 9, and continue from there.
+6) Add the actual digibeectl configuration to the realm switch list. PS: If you wanna add another realm to the list, navigate through the steps 7 and 8. If not, follow the step 9, and continue from there.
 ```
 dgb-rs -a
 ```
