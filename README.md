@@ -30,7 +30,7 @@
    dgb-rs -a
    ```
 5) If you want to add another realm to the switch list, first unset the realm.
-    ```
+      ```
    dgb-rs -u
    ```
 7) After unsetting the realm as described above, repeat the steps 2 and 6.
