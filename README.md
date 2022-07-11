@@ -29,20 +29,23 @@
    ```
    dgb-rs -a
    ```
-5) If you want to add another realm, first unset the realm.
+5) If you want to add another realm to the switch list, first unset the realm.
     ```
    dgb-rs -u
    ```
-7) After unsetting the realm as described above, repeat the steps 2 up to 4.
+7) After unsetting the realm as described above, repeat the steps 2 and 6.
+   - Step 2 -> configure a new realm with digibeectl
+   - Step 6 -> add the realm to the switch list
+   
 8) To get a list of the realm switch list, run:
    ```
    dgb-rs -l
    ```
-9) To switch between realms, just run:
+9)  To switch between realms, just run:
    ```
    dgb-rs -s realm-name
    ```
-10) Get some HELP
+11) Get some HELP
    ```
    dgb-rs -h
    ```
