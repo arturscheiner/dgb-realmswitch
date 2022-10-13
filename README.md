@@ -1,6 +1,6 @@
 ## Digibeectl Realm Switch
 
-**This script let's you switch between Digibee realms.**
+**This script let's you switch between Digibee realms..**
 **Before using it, make sure you have digibeectl installed on your computer**
 
 
